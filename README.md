@@ -13,35 +13,36 @@ inside the brackets should be replaced.
 
 The following is the directory structure:
 
- * projects
-   * [project name]
-     * project.yaml
-     * components
-       * [component name]
-         * component.yaml
-         * features
-           * [feature name].yaml
-     * releases
-       * [release name]
-         * release.yaml
-           * builds
-             * [build name].yaml
-     * testplans
-       * [testplan name].yaml
-     * configurations
-       * [configuration name].yaml
-     * testcases
-       * [testcase name].yaml
-     * results
-       * [release name]
-         * [build name]
-           * [testrun / testplan name]
-             * testrun.yaml
-             * results
-               * [testcase name of result]
-                 * result.yaml
-                 * [any other files to attach to result]
-
+    .
+    ├── configurations
+    │   └── [configuration name].yaml
+    └── projects
+        └── [project name]
+            ├── project.yaml
+            ├── components
+            │   └── [component name]
+            │       ├── component.yaml
+            │       └── features
+            │           └── [feature name].yaml
+            ├── releases
+            │   └── [release name]
+            │       ├── builds
+            │       │   └── [build name].yaml
+            │       └── release.yaml
+            ├── testcases
+            │   └── [testcase name].yaml
+            ├── testplans
+            │   └── [testplan name].yaml
+            └── results
+                └── [release name]
+                    └── [build name]
+                        └── [testrun or testplan name]
+                            ├── testrun.yaml
+                            └── results
+                                └── [testcase name of result]
+                                    ├── result.yaml
+                                    └── [any other files to attach to result]
+    
 Install
 -------
 
