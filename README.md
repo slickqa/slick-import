@@ -46,13 +46,12 @@ The following is the directory structure:
 Install
 -------
 
-To install, you'll need python 2.7, virtualenv, and pip.  You should have python development files,
+To install, you'll need python 2.7, and pip.  You should have python development files,
 a compiler, and for speed libyaml with it's development files.
 
-simply check out this code and run
+Run
 
-    virtualenv virt-python
-    virt-python/bin/pip install -r requirements.txt
+    sudo pip install slickqa-slick-import
 
 Usage
 -----
