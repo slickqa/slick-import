@@ -2,4 +2,4 @@
 *.pyo
 *.iml
 .idea/
-virt-python/
+vpy/
