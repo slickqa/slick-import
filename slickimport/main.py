@@ -10,8 +10,21 @@ import argparse
 import pkg_resources
 import slickqa
 import traceback
+import glob
+import yaml
+import time
 
-
+def banner(message, char='#', indent=4):
+    """Return a banner of characters putting the message indented, surrounded
+    :param message: The message to put in the characters
+    :type message: str
+    :param char: The character to repeat for the banner (1 character or it'll be too long)
+    :type char: str
+    :param indent: The number of characters to indent the message
+    :type indent: int
+    :return: a string containing the banner
+    """
+    return '{} {} {}'.format(char * indent, message, char * (80 - (indent + 2 + len(message))))
 
 def main(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(prog='slick-import',
@@ -44,11 +57,59 @@ def main(args=sys.argv[1:]):
         print('ERROR: Unable to communicate with slick at URL: ', params.url, file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
 
+    print(banner('Importing Configurations'))
+    errors = import_configurations(slick, params.path[0])
+    if len(errors) > 0:
+        for error in errors:
+            print('ERROR: ', error)
 
-def import_configurations(slick, path):
-    """
+def import_start(type, name, index, total):
+    sys.stdout.write('* {}...'.format(name))
+    sys.stdout.flush()
 
-    :param slick:
-    :param path:
-    :return:
+def import_end(type, name, index, total):
+    sys.stdout.write('done.\n')
+    sys.stdout.flush()
+
+def import_configurations(slick, path, onstart=import_start, onend=import_end):
+    """ Import any configurations from the path specified.
+
+    :param slick: The connection to slick.
+    :type slick: slickqa.SlickConnection
+    :param path: The base path that contains the data to import
+    :type path: str
+    :param onstart: a function to be called when an import starts
+    :type onstart: func
+    :param onend: a function to be called when an import is finished
+    :type onend: func
+    :return: A list of errors (if any occured)
     """
+    assert isinstance(slick, slickqa.SlickConnection)
+    errors = []
+    configuration_dir = os.path.join(path, 'configurations')
+    if not os.path.exists(configuration_dir):
+        return errors
+    configurations_to_import = glob.glob(os.path.join(configuration_dir, '*.yaml'))
+    configurations_count = len(configurations_to_import)
+    for index, configuration_yaml_path in enumerate(configurations_to_import):
+        name = os.path.basename(configuration_yaml_path)[:-5]
+        onstart('Configuration', name, index, configurations_count)
+        try:
+            info = dict()
+            with open(configuration_yaml_path, 'r') as yaml_file:
+                info = yaml.load(yaml_file)
+            if 'name' not in info:
+                info['name'] = name
+            config = slickqa.Configuration.from_dict(info)
+            existing = slick.configurations.findOne(name=info['name'])
+            if existing is not None:
+                config.id = existing.id
+                slick.configurations(config).update()
+            else:
+                slick.configurations(config).create()
+        except:
+            errors.append(traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1]))
+        onend('Configuration', name, index, configurations_count)
+
+    return errors
+
