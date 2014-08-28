@@ -66,6 +66,8 @@ def main(args=sys.argv[1:]):
 
     print(banner('Importing Configurations'))
     check_errors(import_configurations(slick, params.path[0]))
+    print(banner('Importing Projects'))
+    check_errors(import_projects(slick, params.path[0]))
 
 def import_start(type, name, index, total):
     sys.stdout.write('* {}...'.format(name))
@@ -134,7 +136,7 @@ def import_projects(slick, path, onstart=import_start, onend=import_end):
     projects_dir = os.path.join(path, 'projects')
     if not os.path.exists(projects_dir):
         return errors
-    projects_to_import = glob.glob(os.path.join(projects_dir, '*', 'projects.yaml'))
+    projects_to_import = glob.glob(os.path.join(projects_dir, '*', 'project.yaml'))
     projects_count = len(projects_to_import)
     for index, project_yaml_path in enumerate(projects_to_import):
         name = os.path.basename(os.path.dirname(project_yaml_path))
