@@ -26,6 +26,13 @@ def banner(message, char='#', indent=4):
     """
     return '{} {} {}'.format(char * indent, message, char * (80 - (indent + 2 + len(message))))
 
+
+def check_errors(errors):
+    if len(errors) > 0:
+        for error in errors:
+            print('ERROR: ', error)
+        sys.exit(1)
+
 def main(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(prog='slick-import',
                                      description='Import and/or sync data into slick from a directory structure.  '
@@ -58,10 +65,7 @@ def main(args=sys.argv[1:]):
         traceback.print_exc(file=sys.stderr)
 
     print(banner('Importing Configurations'))
-    errors = import_configurations(slick, params.path[0])
-    if len(errors) > 0:
-        for error in errors:
-            print('ERROR: ', error)
+    check_errors(import_configurations(slick, params.path[0]))
 
 def import_start(type, name, index, total):
     sys.stdout.write('* {}...'.format(name))
@@ -110,7 +114,6 @@ def import_configurations(slick, path, onstart=import_start, onend=import_end):
         except:
             errors.append(traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1]))
         onend('Configuration', name, index, configurations_count)
-
     return errors
 
 def import_projects(slick, path, onstart=import_start, onend=import_end):
