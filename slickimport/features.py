@@ -48,6 +48,12 @@ def import_features(slick, path, onstart=import_start, onend=import_end, delete=
             if os.path.exists(os.path.join(features_path, "{}.png".format(name))):
                 img = slick.files.upload_local_file(os.path.join(features_path, "{}.png".format(name)))
                 feature.img = img
+            elif os.path.exists(os.path.join(features_path, "{}.gif".format(name))):
+                img = slick.files.upload_local_file(os.path.join(features_path, "{}.gif".format(name)))
+                feature.img = img
+            elif os.path.exists(os.path.join(features_path, "{}.jpg".format(name))):
+                img = slick.files.upload_local_file(os.path.join(features_path, "{}.jpg".format(name)))
+                feature.img = img
             existingComponent = None
             try:
                 existingComponent = slick.projects(project_name).components(component_name).get()
