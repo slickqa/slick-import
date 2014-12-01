@@ -1,6 +1,6 @@
 __author__ = 'jcorbett'
 
-from reporting import import_start, import_end
+from .reporting import import_start, import_end
 import slickqa
 import os
 import glob

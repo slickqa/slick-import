@@ -10,10 +10,11 @@ import argparse
 import pkg_resources
 import slickqa
 import traceback
-from configurations import import_configurations
-from projects import import_projects
-from components import import_components
-from reporting import banner
+from .configurations import import_configurations
+from .projects import import_projects
+from .components import import_components
+from .features import import_features
+from .reporting import banner
 
 def check_errors(errors):
     if len(errors) > 0:
@@ -25,11 +26,12 @@ def main(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(prog='slick-import',
                                      description='Import and/or sync data into slick from a directory structure.  '
                                                  'For help with the layout of the directory structure take a look at: '
-                                                 'http://github.com/slickqa/slick-import',
-                                     version=pkg_resources.get_distribution('slickqa-slick-import').version)
+                                                 'http://github.com/slickqa/slick-import')
+
     parser.add_argument('--delete', action='store_true', help='Delete files once their content is synced.')
     parser.add_argument('-u', '--url', required=True, help='Base URL of slick, must be specified.')
     parser.add_argument('path', metavar='DIR', nargs=1, help='Path to the directory structure to import.')
+    parser.add_argument('--version', action='version', version=pkg_resources.get_distribution('slickqa-slick-import').version)
     params = parser.parse_args(args)
 
     # validate arguments
@@ -58,8 +60,8 @@ def main(args=sys.argv[1:]):
     check_errors(import_projects(slick, params.path[0], delete=params.delete))
     print(banner('Importing Components'))
     check_errors(import_components(slick, params.path[0], delete=params.delete))
-    #print(banner('Importing Features'))
-    #check_errors(import_features(slick, params.path[0], delete=params.delete))
+    print(banner('Importing Features'))
+    check_errors(import_features(slick, params.path[0], delete=params.delete))
     #print(banner('Importing Releases'))
     #check_errors(import_releases(slick, params.path[0], delete=params.delete))
     #print(banner('Importing Builds'))
